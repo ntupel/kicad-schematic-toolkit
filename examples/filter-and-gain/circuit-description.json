@@ -1,0 +1,53 @@
+{
+  "function": "Second-order Sallen-Key low-pass followed by a non-inverting gain stage",
+  "assumptions": ["External regulated +/-12 V supply", "Low-impedance input source and high-impedance output load", "Nominal ideal filter f0 approximately 1.007 kHz; Q approximately 0.709", "Filter gain 1.59 V/V, output-stage gain 2 V/V, combined passband gain 3.18 V/V", "Drawing and connectivity test; no simulation or hardware validation"],
+  "components": [
+    {"ref":"U1","symbol":"Amplifier_Operational:TL081","value":"TL081","role":"Active filter amplifier"},
+    {"ref":"U2","symbol":"Amplifier_Operational:TL081","value":"TL081","role":"Non-inverting output gain amplifier"},
+    {"ref":"R1","symbol":"Device:R","value":"15.8k","role":"First frequency-setting series resistor"},
+    {"ref":"R2","symbol":"Device:R","value":"15.8k","role":"Second frequency-setting series resistor"},
+    {"ref":"R3","symbol":"Device:R","value":"10k","role":"U1 gain reference to ground"},
+    {"ref":"R4","symbol":"Device:R","value":"5.90k","role":"U1 negative feedback"},
+    {"ref":"R5","symbol":"Device:R","value":"10k","role":"U2 gain reference to ground"},
+    {"ref":"R6","symbol":"Device:R","value":"10k","role":"U2 negative feedback"},
+    {"ref":"C1","symbol":"Device:C","value":"10n","role":"Frequency-dependent feedback from U1 output to RC junction"},
+    {"ref":"C2","symbol":"Device:C","value":"10n","role":"Filter shunt capacitor"},
+    {"ref":"C3","symbol":"Device:C","value":"100n","role":"U1 positive supply bypass"},
+    {"ref":"C4","symbol":"Device:C","value":"100n","role":"U1 negative supply bypass"},
+    {"ref":"C5","symbol":"Device:C","value":"100n","role":"U2 positive supply bypass"},
+    {"ref":"C6","symbol":"Device:C","value":"100n","role":"U2 negative supply bypass"},
+    {"ref":"J1","symbol":"Connector_Generic:Conn_01x02","value":"INPUT","role":"Pin 1 signal, pin 2 ground"},
+    {"ref":"J2","symbol":"Connector_Generic:Conn_01x02","value":"OUTPUT","role":"Pin 1 signal, pin 2 ground"},
+    {"ref":"J3","symbol":"Connector_Generic:Conn_01x03","value":"SUPPLY","role":"Pin 1 +12V, pin 2 GND, pin 3 -12V"}
+  ],
+  "nets": {
+    "input":["J1/1","R1/1"],
+    "filter_junction":["R1/2","R2/1","C1/1"],
+    "filter_sense":["R2/2","C2/1","U1/3"],
+    "filter_output":["U1/6","C1/2","R4/2","U2/3"],
+    "U1_feedback":["U1/2","R3/1","R4/1"],
+    "output":["U2/6","R6/2","J2/1"],
+    "U2_feedback":["U2/2","R5/1","R6/1"],
+    "+12V":["J3/1","U1/7","U2/7","C3/1","C5/1"],
+    "-12V":["J3/3","U1/4","U2/4","C4/1","C6/1"],
+    "GND":["J3/2","J1/2","J2/2","R3/2","R5/2","C2/2","C3/2","C4/2","C5/2","C6/2"]
+  },
+  "intentionally_unconnected":["U1/1","U1/5","U1/8","U2/1","U2/5","U2/8"],
+  "relationships": [
+    {"kind":"main_signal","path":["J1","R1","R2","U1 non-inverting input","U1 output","U2 non-inverting input","U2 output","J2"],"drawing":"Continuous left-to-right wires"},
+    {"kind":"frequency_dependent_feedback","path":["filter_output","C1","filter_junction"],"drawing":"Upper loop around U1 input network"},
+    {"kind":"negative_feedback","path":["filter_output","R4","U1_feedback"],"drawing":"Lower loop around U1"},
+    {"kind":"negative_feedback","path":["output","R6","U2_feedback"],"drawing":"Lower loop around U2"},
+    {"kind":"gain_reference","members":["R3","R5"],"drawing":"Vertical resistor below each feedback node"},
+    {"kind":"filter_shunt","path":["filter_sense","C2","GND"],"drawing":"Vertical branch clear of U1 feedback"},
+    {"kind":"decoupling","members":["C3","C4","C5","C6"],"drawing":"Two clearly identified bypass pairs; shared power symbols"}
+  ],
+  "patterns": [
+    {"name":"Sallen-Key low-pass","members":["U1","R1","R2","R3","R4","C1","C2"],"input":"input","output":"filter_output"},
+    {"name":"Non-inverting amplifier","members":["U2","R5","R6"],"input":"filter_output","output":"output"},
+    {"name":"U1 supply bypass","members":["C3","C4"]},
+    {"name":"U2 supply bypass","members":["C5","C6"]}
+  ],
+  "role_provenance":"Roles and topology chosen for this demonstration before drawing",
+  "reference":"https://www.ti.com/lit/an/sloa024b/sloa024b.pdf"
+}

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Readable KiCad Schematics"
+  short_description: "Conventional circuit patterns, wiring, and visual review"
+  default_prompt: "Use $kicad-readable-schematics to create or improve this KiCad schematic with conventional circuit patterns, direct local wiring, and a rendered visual review."

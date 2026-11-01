@@ -1,0 +1,13 @@
+.runtime/
+node_modules/
+dist/
+.pnpm-store/
+__pycache__/
+*.pyc
+.pytest_cache/
+*.log
+.env
+.venv/
+*.kicad_prl
+*.kicad_sch.lck
+*.backup-*
